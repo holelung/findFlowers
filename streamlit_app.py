@@ -186,7 +186,7 @@ with st.form(key="form"):
     with col1:
         name=st.text_input(label="꽃 이름")
 
-    image_url = st.text_input(label="꽃 이미지 URL")
+    image_url = uploaded_image
     submit = st.form_submit_button(label="Submit")
     if submit:
         if not name:
