@@ -56,7 +56,9 @@ with open(labels_file, "r", encoding='UTF-8') as f:
 
 st.title("Flower Book")
 st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
-progress_bar = st.progress(10)
+progress_bar = st.progress(0)
+progress_text = st.empty()
+registered_images = 0 # 등록한 이미지를 저장하는 변수 
 
 uploaded_image = st.file_uploader("사진 찍은 이미지를 업로드하세요.", type=["jpg", "jpeg", "png"])
 def predict(image):
@@ -174,6 +176,10 @@ example_flower = {
 if "flowers" not in st.session_state:
     st.session_state.flowers = initial_flowers
 
+progress_text.text(f"{int(registered_images / 11 * 100)}% 완료")
+
+if "registered_images" not in st.session_state:
+    st.session_state.registered_images = 0
 
 with st.form(key="form"):
     col1, col2 = st.columns(2)
@@ -192,6 +198,10 @@ with st.form(key="form"):
                 "image_url": image_url if image_url else "./images/Rose_1.jpg"
 
             })
+            st.session_state.registered_images += 1
+        
+            progress_bar.progress(st.session_state.registered_images / 11)
+            progress_text.text(f"{int(st.session_state.registered_images / 11 * 100)}% 완료")
 
 
 
