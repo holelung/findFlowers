@@ -8,7 +8,7 @@ from torchvision import transforms as T
 
 print("파일 조정1")
 st.set_page_config(
-    page_title="꽃 도감", # html의 title과 같은 속성
+    page_title="플라월드", # html의 title과 같은 속성
     page_icon="images/logo.jpeg"  # title의 아이콘 지정
 )
 
@@ -49,7 +49,7 @@ with open(labels_file, "r", encoding='UTF-8') as f:
     labels = [line.strip() for line in f.readlines()]
 
 
-st.title("Flower Book")
+st.title("플라월드")
 st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
 progress_bar = st.progress(0)
 progress_text = st.empty()
