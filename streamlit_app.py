@@ -226,6 +226,9 @@ for i in range(0, len(st.session_state.flowers), 3):
 #css
 st.markdown("""   
 <style>
+    [data-testid="stAppViewContainer"] {
+        background-color: rgb(255, 230, 204);
+    }
     img{
         max-width: 150px;  
         max-height: auto;  
