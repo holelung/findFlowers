@@ -64,6 +64,7 @@ def predict(image):
         prediction = torch.nn.functional.softmax(output, dim=0)
         probabilities = {labels[i]: float(prediction[i]) for i in range(11)}
         max_label = max(probabilities, key=probabilities.get)
+        st.session_state.name = max_label
         max_probability = probabilities[max_label]
         result = "이 꽃은 {} 입니다!".format(max_label)
     return result
@@ -182,10 +183,14 @@ auto_complete = st.toggle("예시 데이터로 채우기")
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
+<<<<<<< HEAD
         name=st.text_input(
             label="꽃 이름",
             value=example_flower["name"] if auto_complete else ""
         )
+=======
+        name=st.text_input(label="꽃 이름", value=st.session_state.get('name', ''))
+>>>>>>> 9bec33125aeb7a83bb829eb2b20cd3580cdc89ce
 
     with col2:
 
