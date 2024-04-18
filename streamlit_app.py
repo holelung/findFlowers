@@ -6,7 +6,6 @@ from PIL import Image
 from torchvision.models import resnet50, ResNet50_Weights
 from torchvision import transforms as T
 
-print("파일 조정")
 st.set_page_config(
     page_title="꽃 도감", # html의 title과 같은 속성
     page_icon="images/logo.jpeg"  # title의 아이콘 지정
@@ -40,6 +39,12 @@ model.eval()
 data_transform = T.Compose([
     T.Resize((256, 256)),
         T.CenterCrop((224, 224)),
+        T.RandomHorizontalFlip(p=0.5),
+        T.RandomRotation(degrees=(0, 180)),
+        T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+        T.RandomVerticalFlip(p=0.5),
+        T.RandomPerspective(distortion_scale=0.5, p=0.5, interpolation=3),
+        T.RandomResizedCrop(224, scale=(0.8, 1.0), ratio=(0.75, 1.33)),
         T.ToTensor(),
         T.Normalize(mean=(0.3831408, 0.34173775, 0.28202718), std=(0.3272624, 0.29501674, 0.30364394)),
 ])
@@ -47,13 +52,6 @@ data_transform = T.Compose([
 labels_file = "models/modelspytorch_flowers_labels.txt"
 with open(labels_file, "r", encoding='UTF-8') as f:
     labels = [line.strip() for line in f.readlines()]
-
-
-st.title("Flower Book")
-st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
-progress_bar = st.progress(0)
-progress_text = st.empty()
-registered_images = 0 # 등록한 이미지를 저장하는 변수 
 
 uploaded_image = st.file_uploader("사진 찍은 이미지를 업로드하세요.", type=["jpg", "jpeg", "png"])
 def predict(image):
@@ -66,10 +64,9 @@ def predict(image):
         prediction = torch.nn.functional.softmax(output, dim=0)
         probabilities = {labels[i]: float(prediction[i]) for i in range(11)}
         max_label = max(probabilities, key=probabilities.get)
-        flower_name = max_label
         max_probability = probabilities[max_label]
         result = "이 꽃은 {} 입니다!".format(max_label)
-    return flower_name, result
+    return result
 
 
 
@@ -78,14 +75,21 @@ if uploaded_image is not None:
     # 업로드 된 이미지 보여주기
     image = Image.open(uploaded_image)
     st.image(image, caption='Uploaded Image.', use_column_width=True)
-    
+
     # 이미지를 텐서로 변환하고 모델에 적용하여 예측
     with st.spinner('Predicting...'):
-        flower_name, prediction = predict(image)
+        prediction = predict(image)
 
-    st.session_state['name'] = flower_name
     st.write(prediction)
     # 예측 결과 출력
+
+
+
+print("page reloaded")
+
+st.title("Flower Book")
+st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
+progress_bar = st.progress(10)
 
 
 
@@ -105,87 +109,102 @@ type_emoji_dict = {
 }
 
 
-if "flowers" not in st.session_state:
-    st.session_state.flowers = [
+
+initial_flowers = [
     {
         "name": "진달래",
-        "image_url": "images/emty.png"
+        "types": ["진달래"],
+        "image_url": "https://i.namu.wiki/i/gtPnuI2PUHQ-0oHqv6TtZ1TdGEkSCtmG6j6si7W8Rlf5pzl6cEQfDLEml-EkxgcqC0yxnQf6h-HbwFp3TWjLFUTbsoOAbBwaDGHN-0PyX2IgwNHOZTY4J914nama0tV6pFyIwYNJLSPCMH8B3mBlhA.webp"
     },
     {
         "name": "초롱꽃",
-        "image_url": "images/emty.png",
+        "types": ["초롱꽃"],
+        "image_url": "https://i.namu.wiki/i/H2CVRTzeyJea3cLRxS7ONxARUjh2GKnvSgN1QqZeGDxTYodfV6_NG7INz5jLWCLPCN0m6ysk7iaZwk44iTANWgzWr0Z7yJo2HAmO0pK5Oi4im4HwirGWeAKvlQLfugzFx0tuSdXem8GALtBD8IA63A.webp",
     },
     {
         "name": "능소화",
-        "image_url": "images/emty.png",
+        "types": ["능소화"],
+        "image_url": "https://i.namu.wiki/i/3UjWNPR2fMhZ-4ygfSI2WttZ-CbppJByXsp1CXojq_cI_0byg5fnX-CNrjAubVlUzRAsYeON78foWhAxlag3C9DKDE6O1GatOj9oQaQpRK8FuZaWK_BXNphS7MbwtN5gDSgDY6wNKZNgBllvqxaVGQ.webp",
     },
     {
         "name": "벚꽃",
-        "image_url": "images/emty.png"
+        "types": ["벚꽃"],
+        "image_url": "https://i.namu.wiki/i/m5gxmeZesC7mUhKi5mJzz8RjT35JUfUGmQSYLeCXi7ppDMh2j1lYNP68QwU5ha3B1M9nSzNxMG46XGuWvqqup8VGEm2ApscB3E3vM6yynUGF-lEWndxHdhLSTlRUpZoVwyR0TNObJg1X0Aqxn8MatA.webp"
     },
     {
         "name": "수레국화",
-        "image_url": "images/emty.png"
+        "types": ["수레국화"],
+        "image_url": "https://i.namu.wiki/i/iwar-zRfqOYgdoR-JGfLL8FWE8xcWOnX1HgT743winbvrTCqA8wkXM9WYz-kGRDqv_c619KL59rYF_5-Ln4IkUzdbDU38BSo1Dmz1X9QxUX3_Ty8F731QBk8AxaObPmFYS7SWWAAjuzG73NWSZPcBA.webp"
     },
     {
         "name": "개나리",
-        "image_url": "images/emty.png"
+        "types": ["개나리"],
+        "image_url": "https://i.namu.wiki/i/jsZgoEfGcacBEL-xF7fUJCLEup6uOqLlMbeQtqsONBmnNzPZxiVmzgBM-_YH7eRKMKSaERFkm5N8viLu80iC8ildkFrAo7xlUm5LtLAOuDX68ywQOvctMcCgRRQDs305-fPHciLg7GXXf1cxAn5Gcg.webp"
     },
     {
         "name": "연꽃",
-        "image_url": "images/emty.png"
+        "types": ["연꽃"],
+        "image_url": "https://i.namu.wiki/i/5fEek9xxvCWaXTax7AWZrW_O5B_JHDSvjbROXeHd_NTKweGc0j9halfuYCGCyYThBIevTdYKOq7p-rcf5qA5DVK65gH1J1bOiUwBSCYvcJyJNJ76eJwcs9dIeHofuv9n_YLbRUsU7eDPLeviT3wrZg.webp"
     },
     {
         "name": "나팔꽃",
-        "image_url": "images/emty.png"
+        "types": ["나팔꽃"],
+        "image_url": "https://i.namu.wiki/i/ZvlXBrNewlN6gqEg65YeTt5kj6W9ExM1EAHiHloLJqGPjacjtsUO7A3q2whWAgj88DCMSHo0uwNDl8h4cZPt_c8nIrq_cHS16U-QTFT0mnsHJ4rz6CNt98DIxzkzzrxmgLySdOlgugh0wKX-iuqfnA.webp"
     },
     {
         "name": "무궁화",
-        "image_url": "images/emty.png"
+        "types": ["무궁화"],
+        "image_url": "https://i.namu.wiki/i/et06cFLsf8lgtBrCSmXRe5BVJ3iAii2XUfWqHAXW18GBXkktejNkWIuCa4vioF2ydnJMc2Y4XT44L8HNkO5grNsHoBSvgzHpLe9sTxrd6vpGEX4PPmFuCm_aduXT8drGeF_LkBHbAPt8wSqDfH5jdg.webp"
     },
     {
         "name": "장미",
-        "image_url": "images/emty.png"
+        "types": ["장미"],
+        "image_url": "https://i.namu.wiki/i/N77ZYIeJO038FBOOQYU5NtW4ZZWyiMxIIf4ULpmGjb8s7DU4PzbZD8WzOzFJczPplff2LWC1URdmwqDTiE1Da_t-NbJCZXV9Gs2-IJk993chK1vTpWHFBmbu0UB7IR82Lyp1H0LArtCHFfnQQnxeFw.webp"
     },
     {
         "name": "해바라기",
-        "image_url": "images/emty.png"
+        "types": ["해바라기"],
+        "image_url": "https://i.namu.wiki/i/MJS06mJRUQejrkOL4lYHz2qUdN1Hf7f9BzuAiDMXkSjIHzImCD-lN8EqCXaMNOoJdL-7OyO4QCXUsGDAqzHoKMW1xa8A_T5ISQSGrsu5fQ3yU-MfbFsaca-jqaAOoAzD2hIgMM9uh9b5jq8qXozF4g.webp"
     },
 ]
 
-# 꽃 이름만 추출
-flower_names = [flower["name"] for flower in st.session_state.flowers]
+example_flower = {
+    "name" : "장미",
+    "types" : "장미",
+    "image_url" : "https://i.namu.wiki/i/N77ZYIeJO038FBOOQYU5NtW4ZZWyiMxIIf4ULpmGjb8s7DU4PzbZD8WzOzFJczPplff2LWC1URdmwqDTiE1Da_t-NbJCZXV9Gs2-IJk993chK1vTpWHFBmbu0UB7IR82Lyp1H0LArtCHFfnQQnxeFw.webp"
+}
+
+if "flowers" not in st.session_state:
+    st.session_state.flowers = initial_flowers
 
 
-progress_text.text(f"{int(registered_images / 11 * 100)}% 완료")
-
-if "registered_images" not in st.session_state:
-    st.session_state.registered_images = 0
-
+auto_complete = st.toggle("예시 데이터로 채우기")
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
-        name=st.text_input(label="꽃 이름", value=st.session_state.get('name', ''))
+        name=st.text_input(
+            label="꽃 이름",
+            value=example_flower["name"] if auto_complete else ""
+        )
 
-    image_url = uploaded_image
+    with col2:
+
+        types = st.multiselect(label = "꽃 속성", options = list(type_emoji_dict.keys()))
+    image_url = st.text_input(label="꽃 이미지 URL")
     submit = st.form_submit_button(label="Submit")
     if submit:
         if not name:
             st.error("꽃의 이름을 입력해주세요.")
-        elif name in flower_names:
-            updated = False
-            for flower in st.session_state.flowers:
-                if flower["name"] == name:
-                    flower["image_url"] = uploaded_image.getvalue()
-                    updated = True
-                    st.success("이미지 업로드 완료")
-                    st.session_state.registered_images += 1 
-                    break 
-        
-            progress_bar.progress(st.session_state.registered_images / 11)
-            progress_text.text(f"{int(st.session_state.registered_images / 11 * 100)}% 완료")
+        elif len(types) ==0:
+            st.error("꽃의 속성을 적어도 한 개 선택해주세요.")
         else:
-            st.error(f'{name}은 도감에 넣을 수 없는 사진입니다.')
+            st.success("포켓몬을 추가할 수 있습니다.")
+            st.session_state.flowers.append({
+                "name": name,
+                "types": types,
+                "image_url": image_url if image_url else "./images/Rose_1.jpg"
+
+            })
 
 
 
@@ -196,27 +215,26 @@ for i in range(0, len(st.session_state.flowers), 3):
     for j in range(len(row_flowers)):
         with cols[j]:
             flower = row_flowers[j]
-            with st.expander(label=f"**{i + j + 1}. {flower['name']}**", expanded=False if not flower['image_url'] else True):
-                if flower['image_url']:
-                    st.image(flower["image_url"], width=150, use_column_width=False)
-                    delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
-                    if delete_button:
-                        print("delete button clicked!")
-                        del st.session_state.flowers[i+j]
-                        st.rerun()
+            with st.expander(label=f"**{i + j + 1}. {flower['name']}**",expanded=True):  # 아래 화살표 누르면 나오게 /expanded : 페이지 열면 펼쳐져 있게
+                st.image(flower["image_url"])
+                emoji_types = " ".join([f"{type_emoji_dict[x]} {x}" for x in flower["types"]])
+                st.subheader(emoji_types)
+                delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
+                if delete_button:
+                    print("delete button clicked!")
+                    del st.session_state.flowers[i+j]
+                    st.rerun()
 
 
 #css
 st.markdown("""   
 <style>
     img{
-        max-width: 150px;  
-        max-height: auto;  
+        max-height:300px;
     }
  
-    .st-emotion-cache-1clstc5.eqpbllx1 {
-        display:flex;
-        justify-content : center;
+    [data-testid="StyledFullScreenButton"] {
+        visibility : hidden
     }
 </style>
 """, unsafe_allow_html=True)
