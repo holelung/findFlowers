@@ -83,6 +83,7 @@ if uploaded_image is not None:
     with st.spinner('Predicting...'):
         flower_name, prediction = predict(image)
 
+    
     st.session_state['name'] = flower_name
     st.write(prediction)
     # 예측 결과 출력
@@ -211,7 +212,7 @@ st.markdown("""
 <style>
     img{
         max-width: 150px;  
-        max-height: auto;  
+        max-height: 200px;  
     }
  
     .st-emotion-cache-1clstc5.eqpbllx1 {
