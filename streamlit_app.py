@@ -6,7 +6,6 @@ from PIL import Image
 from torchvision.models import resnet50, ResNet50_Weights
 from torchvision import transforms as T
 
-print("파일 조정1")
 st.set_page_config(
     page_title="플라월드", # html의 title과 같은 속성
     page_icon="images/logo.jpeg"  # title의 아이콘 지정
@@ -198,7 +197,20 @@ with st.form(key="form"):
             st.error(f'{name}은 도감에 넣을 수 없는 사진입니다.')
 
 
-
+# CSS 스타일을 정의하여 이미지의 높이를 200px로 설정
+st.markdown("""
+<style>
+    .image-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    img {
+        width: 150px;  /* 너비는 150px로 고정 */
+        height: 200px; /* 높이도 150px로 고정 */
+    }
+</style>
+""", unsafe_allow_html=True)
 
 for i in range(0, len(st.session_state.flowers), 3):
     row_flowers = st.session_state.flowers[i:i+3]
@@ -216,17 +228,3 @@ for i in range(0, len(st.session_state.flowers), 3):
                         st.rerun()
 
 
-#css
-st.markdown("""   
-<style>
-    img{
-        max-width: 150px;  
-        max-height: 200px;  
-    }
-
-    .st-emotion-cache-1clstc5.eqpbllx1 {
-        display:flex;
-        justify-content : center;
-    }
-</style>
-""", unsafe_allow_html=True)
