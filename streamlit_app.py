@@ -71,6 +71,7 @@ def predict(image):
         prediction = torch.nn.functional.softmax(output, dim=0)
         probabilities = {labels[i]: float(prediction[i]) for i in range(11)}
         max_label = max(probabilities, key=probabilities.get)
+        st.session_state.name = max_label
         max_probability = probabilities[max_label]
         result = "이 꽃은 {} 입니다!".format(max_label)
     return result
@@ -184,7 +185,7 @@ if "registered_images" not in st.session_state:
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
-        name=st.text_input(label="꽃 이름")
+        name=st.text_input(label="꽃 이름", value=st.session_state.get('name', ''))
 
     image_url = uploaded_image
     submit = st.form_submit_button(label="Submit")
