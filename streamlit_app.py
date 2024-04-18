@@ -53,6 +53,11 @@ labels_file = "models/modelspytorch_flowers_labels.txt"
 with open(labels_file, "r", encoding='UTF-8') as f:
     labels = [line.strip() for line in f.readlines()]
 
+
+st.title("Flower Book")
+st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
+progress_bar = st.progress(10)
+
 uploaded_image = st.file_uploader("사진 찍은 이미지를 업로드하세요.", type=["jpg", "jpeg", "png"])
 def predict(image):
     # 이미지를 텐서로 변환
@@ -82,14 +87,6 @@ if uploaded_image is not None:
 
     st.write(prediction)
     # 예측 결과 출력
-
-
-
-print("page reloaded")
-
-st.title("Flower Book")
-st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
-progress_bar = st.progress(10)
 
 
 
@@ -178,30 +175,20 @@ if "flowers" not in st.session_state:
     st.session_state.flowers = initial_flowers
 
 
-auto_complete = st.toggle("예시 데이터로 채우기")
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
-        name=st.text_input(
-            label="꽃 이름",
-            value=example_flower["name"] if auto_complete else ""
-        )
+        name=st.text_input(label="꽃 이름")
 
-    with col2:
-
-        types = st.multiselect(label = "꽃 속성", options = list(type_emoji_dict.keys()))
     image_url = st.text_input(label="꽃 이미지 URL")
     submit = st.form_submit_button(label="Submit")
     if submit:
         if not name:
             st.error("꽃의 이름을 입력해주세요.")
-        elif len(types) ==0:
-            st.error("꽃의 속성을 적어도 한 개 선택해주세요.")
         else:
-            st.success("포켓몬을 추가할 수 있습니다.")
+            st.success("꽃을 추가할 수 있습니다.")
             st.session_state.flowers.append({
                 "name": name,
-                "types": types,
                 "image_url": image_url if image_url else "./images/Rose_1.jpg"
 
             })
@@ -215,15 +202,14 @@ for i in range(0, len(st.session_state.flowers), 3):
     for j in range(len(row_flowers)):
         with cols[j]:
             flower = row_flowers[j]
-            with st.expander(label=f"**{i + j + 1}. {flower['name']}**",expanded=True):  # 아래 화살표 누르면 나오게 /expanded : 페이지 열면 펼쳐져 있게
-                st.image(flower["image_url"])
-                emoji_types = " ".join([f"{type_emoji_dict[x]} {x}" for x in flower["types"]])
-                st.subheader(emoji_types)
-                delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
-                if delete_button:
-                    print("delete button clicked!")
-                    del st.session_state.flowers[i+j]
-                    st.rerun()
+            with st.expander(label=f"**{i + j + 1}. {flower['name']}**", expanded=False if not flower['image_url'] else True):
+                if flower['image_url']:
+                    st.image(flower["image_url"])
+                    delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
+                    if delete_button:
+                        print("delete button clicked!")
+                        del st.session_state.flowers[i+j]
+                        st.rerun()
 
 
 #css
