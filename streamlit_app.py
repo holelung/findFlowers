@@ -113,57 +113,46 @@ type_emoji_dict = {
 initial_flowers = [
     {
         "name": "진달래",
-        "types": ["진달래"],
         "image_url": "https://i.namu.wiki/i/gtPnuI2PUHQ-0oHqv6TtZ1TdGEkSCtmG6j6si7W8Rlf5pzl6cEQfDLEml-EkxgcqC0yxnQf6h-HbwFp3TWjLFUTbsoOAbBwaDGHN-0PyX2IgwNHOZTY4J914nama0tV6pFyIwYNJLSPCMH8B3mBlhA.webp"
     },
     {
         "name": "초롱꽃",
-        "types": ["초롱꽃"],
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/Campanula_punctata_01.JPG/450px-Campanula_punctata_01.JPG",
+        "image_url": "https://i.namu.wiki/i/H2CVRTzeyJea3cLRxS7ONxARUjh2GKnvSgN1QqZeGDxTYodfV6_NG7INz5jLWCLPCN0m6ysk7iaZwk44iTANWgzWr0Z7yJo2HAmO0pK5Oi4im4HwirGWeAKvlQLfugzFx0tuSdXem8GALtBD8IA63A.webp",
     },
     {
         "name": "능소화",
-        "types": ["능소화"],
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/7/7a/CampsisGrandiflora.jpg",
+        "image_url": "https://i.namu.wiki/i/3UjWNPR2fMhZ-4ygfSI2WttZ-CbppJByXsp1CXojq_cI_0byg5fnX-CNrjAubVlUzRAsYeON78foWhAxlag3C9DKDE6O1GatOj9oQaQpRK8FuZaWK_BXNphS7MbwtN5gDSgDY6wNKZNgBllvqxaVGQ.webp",
     },
     {
         "name": "벚꽃",
-        "types": ["벚꽃"],
         "image_url": "https://i.namu.wiki/i/m5gxmeZesC7mUhKi5mJzz8RjT35JUfUGmQSYLeCXi7ppDMh2j1lYNP68QwU5ha3B1M9nSzNxMG46XGuWvqqup8VGEm2ApscB3E3vM6yynUGF-lEWndxHdhLSTlRUpZoVwyR0TNObJg1X0Aqxn8MatA.webp"
     },
     {
         "name": "수레국화",
-        "types": ["수레국화"],
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/CentaureaCyanus-bloem-kl.jpg/450px-CentaureaCyanus-bloem-kl.jpg"
+        "image_url": "https://i.namu.wiki/i/iwar-zRfqOYgdoR-JGfLL8FWE8xcWOnX1HgT743winbvrTCqA8wkXM9WYz-kGRDqv_c619KL59rYF_5-Ln4IkUzdbDU38BSo1Dmz1X9QxUX3_Ty8F731QBk8AxaObPmFYS7SWWAAjuzG73NWSZPcBA.webp"
     },
     {
         "name": "개나리",
-        "types": ["개나리"],
         "image_url": "https://i.namu.wiki/i/jsZgoEfGcacBEL-xF7fUJCLEup6uOqLlMbeQtqsONBmnNzPZxiVmzgBM-_YH7eRKMKSaERFkm5N8viLu80iC8ildkFrAo7xlUm5LtLAOuDX68ywQOvctMcCgRRQDs305-fPHciLg7GXXf1cxAn5Gcg.webp"
     },
     {
         "name": "연꽃",
-        "types": ["연꽃"],
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d3/Nelumno_nucifera_open_flower_-_botanic_garden_adelaide2.jpg/450px-Nelumno_nucifera_open_flower_-_botanic_garden_adelaide2.jpg"
+        "image_url": "https://i.namu.wiki/i/5fEek9xxvCWaXTax7AWZrW_O5B_JHDSvjbROXeHd_NTKweGc0j9halfuYCGCyYThBIevTdYKOq7p-rcf5qA5DVK65gH1J1bOiUwBSCYvcJyJNJ76eJwcs9dIeHofuv9n_YLbRUsU7eDPLeviT3wrZg.webp"
     },
     {
         "name": "나팔꽃",
-        "types": ["나팔꽃"],
-        "image_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/1/10/PharbitisNil5.jpg/450px-PharbitisNil5.jpg"
+        "image_url": "https://i.namu.wiki/i/ZvlXBrNewlN6gqEg65YeTt5kj6W9ExM1EAHiHloLJqGPjacjtsUO7A3q2whWAgj88DCMSHo0uwNDl8h4cZPt_c8nIrq_cHS16U-QTFT0mnsHJ4rz6CNt98DIxzkzzrxmgLySdOlgugh0wKX-iuqfnA.webp"
     },
     {
         "name": "무궁화",
-        "types": ["무궁화"],
         "image_url": "https://i.namu.wiki/i/et06cFLsf8lgtBrCSmXRe5BVJ3iAii2XUfWqHAXW18GBXkktejNkWIuCa4vioF2ydnJMc2Y4XT44L8HNkO5grNsHoBSvgzHpLe9sTxrd6vpGEX4PPmFuCm_aduXT8drGeF_LkBHbAPt8wSqDfH5jdg.webp"
     },
     {
         "name": "장미",
-        "types": ["장미"],
         "image_url": "https://i.namu.wiki/i/N77ZYIeJO038FBOOQYU5NtW4ZZWyiMxIIf4ULpmGjb8s7DU4PzbZD8WzOzFJczPplff2LWC1URdmwqDTiE1Da_t-NbJCZXV9Gs2-IJk993chK1vTpWHFBmbu0UB7IR82Lyp1H0LArtCHFfnQQnxeFw.webp"
     },
     {
         "name": "해바라기",
-        "types": ["해바라기"],
         "image_url": "https://i.namu.wiki/i/MJS06mJRUQejrkOL4lYHz2qUdN1Hf7f9BzuAiDMXkSjIHzImCD-lN8EqCXaMNOoJdL-7OyO4QCXUsGDAqzHoKMW1xa8A_T5ISQSGrsu5fQ3yU-MfbFsaca-jqaAOoAzD2hIgMM9uh9b5jq8qXozF4g.webp"
     },
 ]
