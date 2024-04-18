@@ -51,6 +51,14 @@ with open(labels_file, "r", encoding='UTF-8') as f:
 
 st.title("플라월드")
 st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
+st.markdown("""
+<style>
+    /* 프로그레스 바의 색상 변경 */
+    .stProgress > div > div > div > div {
+        background-color: #a976c7;
+    }
+</style>
+""", unsafe_allow_html=True)
 progress_bar = st.progress(0)
 progress_text = st.empty()
 registered_images = 0 # 등록한 이미지를 저장하는 변수 
@@ -104,23 +112,6 @@ if uploaded_image is not None:
     st.session_state['name'] = flower_name
     st.write(prediction)
     # 예측 결과 출력
-
-
-
-type_emoji_dict = {
-    "진달래": "🌸",
-    "초롱꽃": "🌼",
-    "능소화": "🌺",
-    "벚꽃": "🌸",
-    "수레국화": "🌸",
-    "개나리": "🌼",
-    "연꽃": "🌸",
-    "나팔꽃": "🌸",
-    "무궁화": "🌸",
-    "장미": "🌹",
-    "해바라기": "🌻",
-
-}
 
 
 if "flowers" not in st.session_state:
