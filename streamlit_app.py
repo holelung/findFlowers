@@ -6,6 +6,7 @@ from PIL import Image
 from torchvision.models import resnet50, ResNet50_Weights
 from torchvision import transforms as T
 
+print("파일 조정1")
 st.set_page_config(
     page_title="꽃 도감", # html의 title과 같은 속성
     page_icon="images/logo.jpeg"  # title의 아이콘 지정
@@ -39,12 +40,6 @@ model.eval()
 data_transform = T.Compose([
     T.Resize((256, 256)),
         T.CenterCrop((224, 224)),
-        T.RandomHorizontalFlip(p=0.5),
-        T.RandomRotation(degrees=(0, 180)),
-        T.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
-        T.RandomVerticalFlip(p=0.5),
-        T.RandomPerspective(distortion_scale=0.5, p=0.5, interpolation=3),
-        T.RandomResizedCrop(224, scale=(0.8, 1.0), ratio=(0.75, 1.33)),
         T.ToTensor(),
         T.Normalize(mean=(0.3831408, 0.34173775, 0.28202718), std=(0.3272624, 0.29501674, 0.30364394)),
 ])
@@ -52,6 +47,15 @@ data_transform = T.Compose([
 labels_file = "models/modelspytorch_flowers_labels.txt"
 with open(labels_file, "r", encoding='UTF-8') as f:
     labels = [line.strip() for line in f.readlines()]
+
+
+st.title("Flower Book")
+st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
+progress_bar = st.progress(0)
+progress_text = st.empty()
+registered_images = 0 # 등록한 이미지를 저장하는 변수 
+
+
 
 uploaded_image = st.file_uploader("사진 찍은 이미지를 업로드하세요.", type=["jpg", "jpeg", "png"])
 def predict(image):
@@ -64,9 +68,25 @@ def predict(image):
         prediction = torch.nn.functional.softmax(output, dim=0)
         probabilities = {labels[i]: float(prediction[i]) for i in range(11)}
         max_label = max(probabilities, key=probabilities.get)
+        flower_name = max_label
         max_probability = probabilities[max_label]
-        result = "이 꽃은 {} 입니다!".format(max_label)
-    return result
+        flower_info = {
+            "진달래": " 진달래는 보통 분홍색으로 많이 피고, 사랑과 기쁨을 뜻하는 꽃이랍니다!",
+            "초롱꽃": " 전세계에 오직 1종밖에 없는 희귀식물로 오직 우리나라에서만 피는 꽃이에요! 물이 많고 습도가 높은 곳에서 자라며 대부분 연한 자주색을 띈답니다! 성실을 뜻하는 꽃이에요!",
+            "능소화": " 여름에 피는 연한 주황색 꽃으로 꽃이 한 번만 피고 지지 않고 계속 피고, 또 피고 하여 꽃이 피는 기간 동안 계속 아름다운 꽃을 볼 수 있어요 추위에 약해서 9월이 되면 생기를 잃어버리는 꽃이에요 그리움과 기다림을 뜻하는 꽃이랍니다.",
+            "벚꽃": " 봄이 되면 벚나무에서 활짝 피는 꽃으로 분홍색, 하얀색 꽃잎이 아주 화려하고 아름다운 꽃이에요 일본을 상징하는 꽃으로 아름다운 정신, 정신적 사랑을 뜻하는 꽃이랍니다.",
+            "수레국화": " 국화의 한 종류로 30~90cm 남짓한 키에 보라색, 파란색 꽃잎이 특징적인 꽃이에요 4월~9월에 걸쳐서 피며 행복감을 뜻하는 꽃이랍니다!",
+            "개나리": " 봄에 피는 대한민국의 고유 식물로 전국에서 쉽게 볼 수 있어요 전통적으로 봄이 왔음을 알리는 꽃으로 우리에게 매우 친근한 꽃이랍니다 희망과 깊은 정을 뜻하는 꽃이에요",
+            "연꽃": " 인도에서 태어난 꽃으로 줄기는 우리가 먹는 연근으로 이용된답니다 물에서 피는 꽃이지만 논이나 늪지대에서도 찾아볼 수 있어요 소원해진 사랑, 깨끗한 마음을 뜻하는 꽃이랍니다",
+            "나팔꽃": " 아침 일찍 피었다가 낮에는 오므라들면서 시드는 신기한 꽃이에요 줄기가 덩굴지고 2m까지 감긴답니다 일편단심 사랑을 뜻하는 꽃이에요",
+            "무궁화": " 한국을 상징하는 사실상 국화로 생명력이 매우 강해서 많이 척박한 황경에서도 적응하고 피어나는 강한 꽃이에요 영원히 피고 또 피어서 지지 않는 다는 뜻을 가지고 있어요",
+            "장미": " 높이는 2~3m이며 5~6월에 빨강색, 보라색, 흰색 등 아름다운 색으로 피어나서 관상용으로 키우는 경우가 많아요! 장미는 빛을 매우 좋아하고, 공기가 맛있고 영양분이 많은 땅에서 피어난답니다! 보통 낭만적인 사랑을 뜻하는 꽃이랍니다",
+            "해바라기": " 콜럼버스가 아메리카를 발견한 이후 유럽에 소개되며 태양의 꽃으로 불리게 됐어요 줄기가 태양을 향해 굽어지는 특징이 있어서 해바라기라고 불리게 되었어요! 영원한 사랑을 뜻하는 꽃이에요"
+        }
+        if max_label in flower_info:
+            result = f"이 꽃은 **{max_label}** 입니다!"  # 꽃 이름을 강조체로 표시
+            result += flower_info[max_label]
+    return flower_name, result
 
 
 
@@ -75,21 +95,15 @@ if uploaded_image is not None:
     # 업로드 된 이미지 보여주기
     image = Image.open(uploaded_image)
     st.image(image, caption='Uploaded Image.', use_column_width=True)
-
+    
     # 이미지를 텐서로 변환하고 모델에 적용하여 예측
     with st.spinner('Predicting...'):
-        prediction = predict(image)
+        flower_name, prediction = predict(image)
 
+    
+    st.session_state['name'] = flower_name
     st.write(prediction)
     # 예측 결과 출력
-
-
-
-print("page reloaded")
-
-st.title("Flower Book")
-st.markdown("**꽃**을 하나씩 추가해서 도감을 채워보세요!")
-progress_bar = st.progress(10)
 
 
 
@@ -109,102 +123,88 @@ type_emoji_dict = {
 }
 
 
-
-initial_flowers = [
+if "flowers" not in st.session_state:
+    st.session_state.flowers = [
     {
         "name": "진달래",
-        "types": ["진달래"],
-        "image_url": "https://i.namu.wiki/i/gtPnuI2PUHQ-0oHqv6TtZ1TdGEkSCtmG6j6si7W8Rlf5pzl6cEQfDLEml-EkxgcqC0yxnQf6h-HbwFp3TWjLFUTbsoOAbBwaDGHN-0PyX2IgwNHOZTY4J914nama0tV6pFyIwYNJLSPCMH8B3mBlhA.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "초롱꽃",
-        "types": ["초롱꽃"],
-        "image_url": "https://i.namu.wiki/i/H2CVRTzeyJea3cLRxS7ONxARUjh2GKnvSgN1QqZeGDxTYodfV6_NG7INz5jLWCLPCN0m6ysk7iaZwk44iTANWgzWr0Z7yJo2HAmO0pK5Oi4im4HwirGWeAKvlQLfugzFx0tuSdXem8GALtBD8IA63A.webp",
+        "image_url": "images/emty.png",
     },
     {
         "name": "능소화",
-        "types": ["능소화"],
-        "image_url": "https://i.namu.wiki/i/3UjWNPR2fMhZ-4ygfSI2WttZ-CbppJByXsp1CXojq_cI_0byg5fnX-CNrjAubVlUzRAsYeON78foWhAxlag3C9DKDE6O1GatOj9oQaQpRK8FuZaWK_BXNphS7MbwtN5gDSgDY6wNKZNgBllvqxaVGQ.webp",
+        "image_url": "images/emty.png",
     },
     {
         "name": "벚꽃",
-        "types": ["벚꽃"],
-        "image_url": "https://i.namu.wiki/i/m5gxmeZesC7mUhKi5mJzz8RjT35JUfUGmQSYLeCXi7ppDMh2j1lYNP68QwU5ha3B1M9nSzNxMG46XGuWvqqup8VGEm2ApscB3E3vM6yynUGF-lEWndxHdhLSTlRUpZoVwyR0TNObJg1X0Aqxn8MatA.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "수레국화",
-        "types": ["수레국화"],
-        "image_url": "https://i.namu.wiki/i/iwar-zRfqOYgdoR-JGfLL8FWE8xcWOnX1HgT743winbvrTCqA8wkXM9WYz-kGRDqv_c619KL59rYF_5-Ln4IkUzdbDU38BSo1Dmz1X9QxUX3_Ty8F731QBk8AxaObPmFYS7SWWAAjuzG73NWSZPcBA.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "개나리",
-        "types": ["개나리"],
-        "image_url": "https://i.namu.wiki/i/jsZgoEfGcacBEL-xF7fUJCLEup6uOqLlMbeQtqsONBmnNzPZxiVmzgBM-_YH7eRKMKSaERFkm5N8viLu80iC8ildkFrAo7xlUm5LtLAOuDX68ywQOvctMcCgRRQDs305-fPHciLg7GXXf1cxAn5Gcg.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "연꽃",
-        "types": ["연꽃"],
-        "image_url": "https://i.namu.wiki/i/5fEek9xxvCWaXTax7AWZrW_O5B_JHDSvjbROXeHd_NTKweGc0j9halfuYCGCyYThBIevTdYKOq7p-rcf5qA5DVK65gH1J1bOiUwBSCYvcJyJNJ76eJwcs9dIeHofuv9n_YLbRUsU7eDPLeviT3wrZg.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "나팔꽃",
-        "types": ["나팔꽃"],
-        "image_url": "https://i.namu.wiki/i/ZvlXBrNewlN6gqEg65YeTt5kj6W9ExM1EAHiHloLJqGPjacjtsUO7A3q2whWAgj88DCMSHo0uwNDl8h4cZPt_c8nIrq_cHS16U-QTFT0mnsHJ4rz6CNt98DIxzkzzrxmgLySdOlgugh0wKX-iuqfnA.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "무궁화",
-        "types": ["무궁화"],
-        "image_url": "https://i.namu.wiki/i/et06cFLsf8lgtBrCSmXRe5BVJ3iAii2XUfWqHAXW18GBXkktejNkWIuCa4vioF2ydnJMc2Y4XT44L8HNkO5grNsHoBSvgzHpLe9sTxrd6vpGEX4PPmFuCm_aduXT8drGeF_LkBHbAPt8wSqDfH5jdg.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "장미",
-        "types": ["장미"],
-        "image_url": "https://i.namu.wiki/i/N77ZYIeJO038FBOOQYU5NtW4ZZWyiMxIIf4ULpmGjb8s7DU4PzbZD8WzOzFJczPplff2LWC1URdmwqDTiE1Da_t-NbJCZXV9Gs2-IJk993chK1vTpWHFBmbu0UB7IR82Lyp1H0LArtCHFfnQQnxeFw.webp"
+        "image_url": "images/emty.png"
     },
     {
         "name": "해바라기",
-        "types": ["해바라기"],
-        "image_url": "https://i.namu.wiki/i/MJS06mJRUQejrkOL4lYHz2qUdN1Hf7f9BzuAiDMXkSjIHzImCD-lN8EqCXaMNOoJdL-7OyO4QCXUsGDAqzHoKMW1xa8A_T5ISQSGrsu5fQ3yU-MfbFsaca-jqaAOoAzD2hIgMM9uh9b5jq8qXozF4g.webp"
+        "image_url": "images/emty.png"
     },
 ]
+    
 
-example_flower = {
-    "name" : "장미",
-    "types" : "장미",
-    "image_url" : "https://i.namu.wiki/i/N77ZYIeJO038FBOOQYU5NtW4ZZWyiMxIIf4ULpmGjb8s7DU4PzbZD8WzOzFJczPplff2LWC1URdmwqDTiE1Da_t-NbJCZXV9Gs2-IJk993chK1vTpWHFBmbu0UB7IR82Lyp1H0LArtCHFfnQQnxeFw.webp"
-}
-
-if "flowers" not in st.session_state:
-    st.session_state.flowers = initial_flowers
+# 꽃 이름만 추출
+flower_names = [flower["name"] for flower in st.session_state.flowers]
 
 
-auto_complete = st.toggle("예시 데이터로 채우기")
+progress_text.text(f"{int(registered_images / 11 * 100)}% 완료")
+
+if "registered_images" not in st.session_state:
+    st.session_state.registered_images = 0
+
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
-        name=st.text_input(
-            label="꽃 이름",
-            value=example_flower["name"] if auto_complete else ""
-        )
+        name=st.text_input(label="꽃 이름", value=st.session_state.get('name', ''))
 
-    with col2:
-
-        types = st.multiselect(label = "꽃 속성", options = list(type_emoji_dict.keys()))
-    image_url = st.text_input(label="꽃 이미지 URL")
+    image_url = uploaded_image
     submit = st.form_submit_button(label="Submit")
     if submit:
         if not name:
             st.error("꽃의 이름을 입력해주세요.")
-        elif len(types) ==0:
-            st.error("꽃의 속성을 적어도 한 개 선택해주세요.")
+        elif name in flower_names:
+            updated = False
+            for flower in st.session_state.flowers:
+                if flower["name"] == name:
+                    flower["image_url"] = uploaded_image.getvalue()
+                    updated = True
+                    st.success("이미지 업로드 완료")
+                    st.session_state.registered_images += 1 
+                    break 
+        
+            progress_bar.progress(st.session_state.registered_images / 11)
+            progress_text.text(f"{int(st.session_state.registered_images / 11 * 100)}% 완료")
         else:
-            st.success("포켓몬을 추가할 수 있습니다.")
-            st.session_state.flowers.append({
-                "name": name,
-                "types": types,
-                "image_url": image_url if image_url else "./images/Rose_1.jpg"
-
-            })
+            st.error(f'{name}은 도감에 넣을 수 없는 사진입니다.')
 
 
 
@@ -215,26 +215,27 @@ for i in range(0, len(st.session_state.flowers), 3):
     for j in range(len(row_flowers)):
         with cols[j]:
             flower = row_flowers[j]
-            with st.expander(label=f"**{i + j + 1}. {flower['name']}**",expanded=True):  # 아래 화살표 누르면 나오게 /expanded : 페이지 열면 펼쳐져 있게
-                st.image(flower["image_url"])
-                emoji_types = " ".join([f"{type_emoji_dict[x]} {x}" for x in flower["types"]])
-                st.subheader(emoji_types)
-                delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
-                if delete_button:
-                    print("delete button clicked!")
-                    del st.session_state.flowers[i+j]
-                    st.rerun()
+            with st.expander(label=f"**{i + j + 1}. {flower['name']}**", expanded=False if not flower['image_url'] else True):
+                if flower['image_url']:
+                    st.image(flower["image_url"], width=150, use_column_width=False)
+                    delete_button = st.button(label="삭제", key=i+j, use_container_width=True)
+                    if delete_button:
+                        print("delete button clicked!")
+                        del st.session_state.flowers[i+j]
+                        st.rerun()
 
 
 #css
 st.markdown("""   
 <style>
     img{
-        max-height:300px;
+        max-width: 150px;  
+        max-height: 200px;  
     }
- 
-    [data-testid="StyledFullScreenButton"] {
-        visibility : hidden
+
+    .st-emotion-cache-1clstc5.eqpbllx1 {
+        display:flex;
+        justify-content : center;
     }
 </style>
 """, unsafe_allow_html=True)
