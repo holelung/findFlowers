@@ -94,7 +94,7 @@ def predict(image):
             "해바라기": " 콜럼버스가 아메리카를 발견한 이후 유럽에 소개되며 태양의 꽃으로 불리게 됐어요 줄기가 태양을 향해 굽어지는 특징이 있어서 해바라기라고 불리게 되었어요! 영원한 사랑을 뜻하는 꽃이에요"
         }
         if max_label in flower_info and probability>90:
-            result = f"이 꽃은{probability}% 확률로 **{max_label}** 입니다!"  # 꽃 이름을 강조체로 표시
+            result = f"이 꽃은 {probability}% 확률로 **{max_label}** 입니다!"  # 꽃 이름을 강조체로 표시
             result += flower_info[max_label]
         else:
             result = "이 사진은 꽃이 아니거나, 등록된 꽃이 아닙니다."
