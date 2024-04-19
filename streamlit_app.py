@@ -5,11 +5,13 @@ import torch.nn as nn
 from PIL import Image
 from torchvision.models import resnet50, ResNet50_Weights
 from torchvision import transforms as T
+import math
 
 st.set_page_config(
     page_title="플라월드", # html의 title과 같은 속성
     page_icon="images/logo.jpeg"  # title의 아이콘 지정
 )
+probability = 0
 
 # 사전 학습된 ResNET 모델
 model = resnet50(weights=ResNet50_Weights.DEFAULT)
@@ -77,6 +79,7 @@ def predict(image):
         max_label = max(probabilities, key=probabilities.get)
         flower_name = max_label
         max_probability = probabilities[max_label]
+        probability = math.trunc(max_probability*1000)/10
         flower_info = {
             "진달래": " 진달래는 보통 분홍색으로 많이 피고, 사랑과 기쁨을 뜻하는 꽃이랍니다!",
             "초롱꽃": " 전세계에 오직 1종밖에 없는 희귀식물로 오직 우리나라에서만 피는 꽃이에요! 물이 많고 습도가 높은 곳에서 자라며 대부분 연한 자주색을 띈답니다! 성실을 뜻하는 꽃이에요!",
@@ -90,10 +93,13 @@ def predict(image):
             "장미": " 높이는 2-3m이며 5~6월에 빨강색, 보라색, 흰색 등 아름다운 색으로 피어나서 관상용으로 키우는 경우가 많아요! 장미는 빛을 매우 좋아하고, 공기가 맛있고 영양분이 많은 땅에서 피어난답니다! 보통 낭만적인 사랑을 뜻하는 꽃이랍니다",
             "해바라기": " 콜럼버스가 아메리카를 발견한 이후 유럽에 소개되며 태양의 꽃으로 불리게 됐어요 줄기가 태양을 향해 굽어지는 특징이 있어서 해바라기라고 불리게 되었어요! 영원한 사랑을 뜻하는 꽃이에요"
         }
-        if max_label in flower_info:
-            result = f"이 꽃은 **{max_label}** 입니다!"  # 꽃 이름을 강조체로 표시
+        if max_label in flower_info and probability>90:
+            result = f"이 꽃은{probability}% 확률로 **{max_label}** 입니다!"  # 꽃 이름을 강조체로 표시
             result += flower_info[max_label]
-    return flower_name, result
+        else:
+            result = "이 사진은 꽃이 아니거나, 등록된 꽃이 아닙니다."
+            flower_name = "등록할 수 없는 꽃입니다."
+    return flower_name, result, probability
 
 
 
@@ -105,11 +111,14 @@ if uploaded_image is not None:
     
     # 이미지를 텐서로 변환하고 모델에 적용하여 예측
     with st.spinner('Predicting...'):
-        flower_name, prediction = predict(image)
+        flower_name, prediction, probability = predict(image)
 
     
     st.session_state['name'] = flower_name
-    st.write(prediction)
+    if probability > 90 :
+        st.write(prediction)
+    else:
+        st.error(prediction)
     # 예측 결과 출력
 
 
@@ -164,7 +173,15 @@ if "flowers" not in st.session_state:
 
 # 꽃 이름만 추출
 flower_names = [flower["name"] for flower in st.session_state.flowers]
-
+if probability == 0:
+    enabled = False
+    help_text = "사진을 업로드 해주세요"
+elif probability >90:
+    enabled = True
+    help_text = ""
+else:
+    enabled = False
+    help_text = "도감에 넣을 수 없는 사진입니다."
 
 progress_text.text(f"{int(registered_images / 11 * 100)}% 완료")
 
@@ -174,13 +191,13 @@ if "registered_images" not in st.session_state:
 with st.form(key="form"):
     col1, col2 = st.columns(2)
     with col1:
-        name=st.text_input(label="꽃 이름", value=st.session_state.get('name', ''))
+        name=st.text_input(label="꽃 이름", value=flower_name if probability > 90 else "")
 
     image_url = uploaded_image
-    submit = st.form_submit_button(label="Submit")
+    submit = st.form_submit_button(label="Submit", help=help_text)
     if submit:
         if not name:
-            st.error("꽃의 이름을 입력해주세요.")
+            st.error("사진을 업로드 해주세요")
         elif name in flower_names:
             updated = False
             for flower in st.session_state.flowers:
@@ -209,7 +226,9 @@ st.markdown("""
         width: 150px;  /* 너비는 150px로 고정 */
         height: 200px; /* 높이도 150px로 고정 */
     }
-</style>
+    [data-testid="StyledFullScreenButton"]{
+        visibility:hidden
+    }
 """, unsafe_allow_html=True)
 
 for i in range(0, len(st.session_state.flowers), 3):
