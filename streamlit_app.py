@@ -175,12 +175,15 @@ if "flowers" not in st.session_state:
 flower_names = [flower["name"] for flower in st.session_state.flowers]
 if probability == 0:
     enabled = False
+    isPicture = False
     help_text = "사진을 업로드 해주세요"
 elif probability >90:
     enabled = True
+    isPicture = True
     help_text = ""
 else:
     enabled = False
+    isPicture = True
     help_text = "도감에 넣을 수 없는 사진입니다."
 
 progress_text.text(f"{int(registered_images / 11 * 100)}% 완료")
@@ -196,8 +199,10 @@ with st.form(key="form"):
     image_url = uploaded_image
     submit = st.form_submit_button(label="Submit", help=help_text)
     if submit:
-        if not name:
-            st.error("사진을 업로드 해주세요")
+        if not enabled and not isPicture:
+            st.error("사진을 업로드 해주세요.")
+        elif not enabled and isPicture:
+            st.error("도감에 등록할 수 있는 사진이 아닙니다.")
         elif name in flower_names:
             updated = False
             for flower in st.session_state.flowers:
