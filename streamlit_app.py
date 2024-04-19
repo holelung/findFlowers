@@ -7,9 +7,11 @@ from torchvision.models import resnet50, ResNet50_Weights
 from torchvision import transforms as T
 import math
 
+empty_img = 'images/Floworld_App_Logo.jpg'
+
 st.set_page_config(
     page_title="플라월드", # html의 title과 같은 속성
-    page_icon="images/logo.jpeg"  # title의 아이콘 지정
+    page_icon="images/Floworld_App_Logo.jpg"  # title의 아이콘 지정
 )
 probability = 0
 
@@ -126,47 +128,47 @@ if "flowers" not in st.session_state:
     st.session_state.flowers = [
     {
         "name": "진달래",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "초롱꽃",
-        "image_url": "images/emty.png",
+        "image_url": empty_img,
     },
     {
         "name": "능소화",
-        "image_url": "images/emty.png",
+        "image_url": empty_img,
     },
     {
         "name": "벚꽃",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "수레국화",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "개나리",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "연꽃",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "나팔꽃",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "무궁화",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "장미",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
     {
         "name": "해바라기",
-        "image_url": "images/emty.png"
+        "image_url": empty_img
     },
 ]
     
