@@ -33,7 +33,7 @@ ResNet-50을 사용한 꽃 분류 모델을 학습시키는 코드와 관련된 
 ---
 
 ## 기술 스택
-- **Framework**: PyTorch
+- **Library**: PyTorch
 - **Model**: ResNet-50 (사전 학습된 모델 사용)
 - **Frontend**: Streamlit
 - **Language**: Python
